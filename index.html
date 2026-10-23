@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VP.Start | Innovation Through Technology</title>
+
+<!-- External Libraries for Checklist Tool -->
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<style>
+:root{--navy:#12345a;--blue:#1e4d82;--bg:#f1f5f9;--border:#d5deea;--text:#1e293b;--green:#16845b;--muted:#64748b;--panel-bg:rgba(255, 255, 255, 0.92);--card-bg:#ffffff;}
+[data-theme="dark"]{--navy:#0f172a;--blue:#3b82f6;--bg:#090d16;--border:#334155;--text:#f8fafc;--green:#22c55e;--muted:#94a3b8;--panel-bg:rgba(15, 23, 42, 0.92);--card-bg:#1e293b;}
+*{box-sizing:border-box}
+
+/* Full website background integration using v_b.jpg */
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background-image: url('v_b.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color:var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#loginScreen, #dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header{
+  background: transparent;
+  color:#fff;
+  padding:18px 3%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+  position:relative;
+  z-index:9999;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: none;
+}
+
+/* Star Drop Animation Effect inside Header */
+header::after {
+  content: "";
+  position: absolute;
+  top: -50px;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #93c5fd, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 160px 80px, #e0f2fe, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 230px 10px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 310px 60px, #60a5fa, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 400px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 500px 90px, #93c5fd, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 620px 20px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 750px 70px, #e0f2fe, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 800px 100px;
+  animation: starDrop 6s linear infinite;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes starDrop {
+  0% { transform: translateY(-50px); }
+  100% { transform: translateY(120px); }
+}
+
+.brand{display:flex;align-items:center;gap:13px;z-index:2;position:relative}
+
+.logo{
+  width:54px;
+  height:54px;
+  object-fit:contain;
+}
+
+h1{margin:0;font-size:24px}header p{margin:5px 0 0;color:#dbeafe;font-size:13px}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:12px 16px;font-weight:bold}
+
+.menu-container {
+  position: relative;
+  z-index: 10000;
+}
+
+#menuBtn {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  padding: 10px 18px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  z-index: 10001;
+  position: relative;
+}
+#menuBtn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: auto;
+  top: 52px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  min-width: 200px;
+  max-width: 90vw;
+  overflow: hidden;
+  z-index: 10002;
+}
+
+.menu-dropdown.show {
+  display: block;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+  padding: 14px 18px;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: normal;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.menu-item:last-child {
+  border-bottom: none;
+}
+.menu-item:hover {
+  background: var(--blue);
+  color: #ffffff;
+}
+
+main{
+  width: 100%;
+  padding: 15px 2% 40px;
+  flex: 1;
+}
+
+.panel{
+  background:var(--panel-bg);
+  backdrop-filter: blur(10px);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:24px;
+  box-shadow:0 8px 32px rgba(18, 52, 90, 0.2);
+  margin-bottom:20px;
+  color: var(--text);
+}
+
+#appPanel.fullscreen-mode {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
+  min-height: 88vh;
+  padding: 24px 2% !important;
+  background: var(--panel-bg) !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+}
+
+#homePanel {
+  max-width: 480px;
+  margin-left: 0;
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+[data-theme="dark"] #homePanel {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+#homePanel h2,
+#homePanel p.muted {
+  color: #ffffff !important;
+}
+
+.login-wrap {
+  max-width: 440px;
+  margin: 5vh auto;
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+}
+
+.login-wrap h2,
+.login-wrap p.muted,
+.login-wrap label {
+  color: #ffffff !important;
+}
+
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);color:var(--text)}
+.primary{background:var(--blue);color:#fff;width:100%;margin-top:18px}.error{color:#fca5a5;min-height:20px;font-size:14px}.muted{color:#e2e8f0;line-height:1.6}
+
+.options{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.option{
+  width:100%;
+  min-height: auto;
+  text-align:left;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  border:1px solid var(--border);
+  padding:18px 20px;
+  border-radius:14px;
+  box-shadow:0 4px 12px #12345a0a;
+  color:var(--text);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.option:hover{border-color:#1e4d82;transform:translateX(4px)}.option .emoji{font-size:26px;display:block;margin-bottom:8px}.option strong{display:block;font-size:18px;margin-bottom:4px}
+
+.option.update-card {
+  background: linear-gradient(135deg, rgba(13, 27, 42, 0.72), rgba(15, 30, 50, 0.78)), url('c.jpg') no-repeat center center / cover !important;
+  border: 1px solid rgba(0, 255, 204, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.option.update-card strong {
+  color: #00ffcc !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.option.update-card span.muted {
+  color: #e2e8f0 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.option.checklist-card {
+  background: linear-gradient(135deg, rgba(13, 27, 42, 0.72), rgba(15, 30, 50, 0.78)), url('b.jpeg') no-repeat center center / cover !important;
+  border: 1px solid rgba(0, 255, 204, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.option.checklist-card strong {
+  color: #00ffcc !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.option.checklist-card span.muted {
+  color: #e2e8f0 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.option.maintenance-card {
+  background: linear-gradient(135deg, rgba(13, 27, 42, 0.72), rgba(15, 30, 50, 0.78)), url('a.jpeg') no-repeat center center / cover !important;
+  border: 1px solid rgba(0, 255, 204, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.option.maintenance-card strong {
+  color: #00ffcc !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.option.maintenance-card span.muted {
+  color: #e2e8f0 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.secondary{background:var(--border);color:var(--text)}
+.selector-row{display:flex;gap:15px;flex-wrap:wrap;align-items:end}.field{flex:1;min-width:230px}
+.pcb-options{margin-top:20px;border-top:1px solid var(--border);padding-top:18px}.pcb-buttons{display:flex;flex-wrap:wrap;gap:10px}
+.pcb-button{background:var(--card-bg);border:2px solid var(--border);color:var(--text)}.pcb-button.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.progress-track{height:14px;background:var(--border);border-radius:20px;overflow:hidden;margin-top:12px}.progress-fill{height:100%;width:0;background:var(--green);transition:width .2s}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(480px, 1fr));gap:24px;margin-top:20px}
+.process-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:22px;margin:0;min-width:0;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.2s ease}
+.process-card:hover{box-shadow:0 6px 22px rgba(18,52,90,0.12)}
+.process-card.done{border-color:#86c9a8;background:var(--card-bg)}
+.card-title{font-size:18px;margin:0 0 14px;color:var(--text);overflow-wrap:anywhere}
+.step-tag{font-size:12px;color:var(--muted);white-space:nowrap;background:var(--border);padding:4px 10px;border-radius:20px;font-weight:bold}
+.process-image-wrap{position:relative;background:#17202a;border-radius:12px;height:340px;overflow:hidden;margin-bottom:16px;border:1px solid var(--border)}
+.process-image{width:100%;height:100%;object-fit:contain}
+.instructions{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:14px;padding:16px;border-radius:10px;margin:0 0 16px;background:var(--card-bg);border:1px solid var(--border);color:var(--text)}
+.complete{display:flex;gap:12px;align-items:center;border-top:1px solid var(--border);padding-top:16px;cursor:pointer;font-size:14px;font-weight:bold}
+.complete input{width:22px;height:22px;accent-color:var(--green)}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.hidden{display:none!important}
+
+/* FIXED & STYLED FOOTER */
+footer{
+  text-align:center;
+  padding:16px 20px;
+  color:#cbd5e1;
+  font-size:13px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  width: 100%;
+}
+
+.checklist-sub-container{width:100%;margin:auto;}
+.sub-card{background:var(--card-bg);border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,.08);border:1px solid var(--border)}
+.sub-card h2{margin-top:0;color:var(--text)}
+.id-photo-section{margin-top:20px;padding:15px;border:2px dashed var(--border);border-radius:12px;background:var(--card-bg);text-align:center}
+.id-photo-section h3{margin:0 0 8px;color:var(--text)}
+.id-photo-preview{width:180px;height:70px;object-fit:contain;border:2px solid var(--border);border-radius:8px;background:var(--border);display:block;margin:10px auto}
+.no-photo{width:180px;height:70px;display:flex;align-items:center;justify-content:center;margin:10px auto;border:2px dashed var(--border);border-radius:8px;color:var(--muted);font-size:13px;background:var(--card-bg)}
+.camera-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.camera-btn,.native-camera-btn{border:0;padding:11px 18px;border-radius:8px;color:white;font-weight:bold;cursor:pointer;font-size:14px}
+.camera-btn{background:#2563eb}.native-camera-btn{background:#16a34a}
+.ocr-status{font-size:13px;margin-top:8px;color:var(--muted)}
+.ocr-detected{margin-top:8px;padding:8px;background:#dcfce7;color:#166534;border-radius:7px;font-weight:bold;word-break:break-all}
+.camera-modal{display:none;position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;background:#000;align-items:center;justify-content:center}
+.camera-content{width:100%;max-width:900px;text-align:center;color:white;position:relative}
+.camera-video-wrapper{position:relative;width:100%;background:#000;overflow:hidden}
+.camera-video{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain;background:#000}
+.camera-guide{position:absolute;left:5%;top:38%;width:90%;height:24%;border:3px solid #22c55e;border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,.38);pointer-events:none}
+.camera-guide-text{position:absolute;top:31%;left:0;width:100%;text-align:center;color:white;font-weight:bold;font-size:16px;text-shadow:0 2px 4px #000;pointer-events:none}
+.camera-action{padding:15px;display:flex;justify-content:center;gap:10px;background:#000}
+.capture-btn,.close-camera-btn{border:0;padding:13px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:15px}
+.capture-btn{background:#22c55e;color:white}.close-camera-btn{background:#ef4444;color:white}
+.test-card{border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:12px;background:var(--card-bg)}
+.test-title{font-weight:bold;margin-bottom:12px;color:var(--text)}
+.result-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.result-btn{flex:1;min-width:100px;padding:11px;border-radius:8px;font-weight:bold;cursor:pointer;border:2px solid}
+.pass-btn{background:#dcfce7;color:#166534;border-color:#86efac}
+.fail-btn{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.notuse-btn{background:#f1f5f9;color:#475569;border-color:#cbd5e1}
+.pass-btn.selected{background:#16a34a;color:white;box-shadow:0 0 0 3px #bbf7d0}
+.fail-btn.selected{background:#dc2626;color:white;box-shadow:0 0 0 3px #fecaca}
+.notuse-btn.selected{background:#64748b;color:white;box-shadow:0 0 0 3px #cbd5e1}
+.problem-box{display:none;margin-top:12px}
+.bulk-action-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+.bulk-btns{display:flex;gap:8px;flex-wrap:wrap}
+.select-all-tests-btn{background:#0284c7;color:white;border:0;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
+.select-all-tests-btn:hover{background:#0369a1}
+.select-all-process-btn{background:#7c3aed;color:white;border:0;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
+.select-all-process-btn:hover{background:#6d28d9}
+.next-product-btn{width:100%;padding:16px;background:#1d4ed8;color:white;border:0;border-radius:10px;font-size:18px;font-weight:bold;cursor:pointer}
+.next-product-btn:hover{background:#1e40af}
+.history-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.history-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.history-btn{border:0;border-radius:7px;padding:9px 13px;color:white;font-weight:bold;cursor:pointer}
+.select-btn{background:#475569}.delete-btn{background:#dc2626}.clear-btn{background:#7f1d1d}.excel-btn{background:#15803d}
+.history-search-row{margin-top:12px;margin-bottom:5px;}
+.history-table-wrapper{overflow-x:auto}
+.checklist-table{width:100%;border-collapse:collapse;margin-top:15px;min-width:1050px}
+.checklist-table th,.checklist-table td{border:1px solid var(--border);padding:9px;text-align:center;vertical-align:middle;color:var(--text)}
+.checklist-table th{background:var(--blue);color:white}
+.history-photo{width:100px;height:45px;object-fit:contain;border:1px solid var(--border);border-radius:5px;cursor:pointer}
+.pass-result{color:#15803d;font-weight:bold}.fail-result{color:#dc2626;font-weight:bold}
+.edit-btn{background:#2563eb;color:white;border:0;border-radius:6px;padding:7px 10px;cursor:pointer}
+.edit-modal{display:none;position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.65);overflow:auto}
+.edit-content{background:var(--card-bg);color:var(--text);width:95%;max-width:650px;margin:40px auto;padding:20px;border-radius:12px;border:1px solid var(--border)}
+.edit-content h2{margin-top:0;color:var(--text)}
+.edit-row{margin-bottom:15px}
+.edit-buttons{display:flex;gap:10px;margin-top:15px}
+.save-edit{flex:1;background:#16a34a;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
+.cancel-edit{flex:1;background:#64748b;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
+
+@media(max-width:750px){.grid{grid-template-columns:1fr}header{padding:15px}h1{font-size:20px}main{padding:10px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<section id="loginScreen">
+  <header>
+    <div class="brand">
+      <img class="logo" src="VP.png" alt="Logo" onerror="this.style.display='none'">
+      <div><h1>VP.Start</h1><p>Innovation Through Technology</p></div>
+    </div>
+  </header>
+  <main>
+    <div class="panel login-wrap">
+      <p class="muted">Sign in to open the DRC tools.</p>
+      <form id="loginForm" onsubmit="return doLogin(event)">
+        <label for="username">Username</label>
+        <input id="username" autocomplete="username" required placeholder="username">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required placeholder="password">
+        <button class="primary" type="submit" id="loginBtn">Log In</button>
+        <div id="loginError" class="error" role="alert"></div>
+      </form>
+    </div>
+  </main>
+  <footer>VP.Start - Innovation Through Technology | © 2026</footer>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+  <header>
+    <div class="brand">
+      <img class="logo" src="VP.png" alt="Logo" onerror="this.style.display='none'">
+      <div><h1>VP.Start</h1><p>Innovation Through Technology</p></div>
+    </div>
+    
+    <!-- DROPDOWN MENU BUTTON -->
+    <div class="menu-container">
+      <button id="menuBtn" onclick="toggleMenu(event)">⚙️ Menu ▼</button>
+      <div id="menuDropdown" class="menu-dropdown">
+        <button type="button" class="menu-item" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+        <button type="button" class="menu-item" onclick="openPasswordModal()">🔑 Change Password</button>
+        <button type="button" class="menu-item" onclick="doLogout()">🚪 Logout</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <!-- Home Panel -->
+    <div id="homePanel" class="panel">
+      <h2>Choose a Tool</h2><p class="muted">Select one of the tools below.</p>
+      <div class="options">
+        <button class="option update-card" onclick="openTool('update')"><span class="emoji">🔧</span><strong>Update DRC</strong><span class="muted">DRC Series Update to PLUM process guide.</span></button>
+        <button class="option checklist-card" onclick="openTool('checklist')"><span class="emoji">☑️</span><strong>Checklist DRC</strong><span class="muted">Product testing, results, history and export.</span></button>
+        <button class="option maintenance-card" onclick="openTool('maintenance')"><span class="emoji">🛠️</span><strong>Maintenance Tip</strong><span class="muted">Maintenance process cards using update flows.</span></button>
+      </div>
+    </div>
+
+    <!-- Dynamic Tool Panel (Full Screen Mode) -->
+    <div id="appPanel" class="panel hidden">
+      <div class="toolbar"><h2 id="appTitle">DRC Tool</h2><button class="secondary" onclick="closeTool()">← Back</button></div>
+      
+      <!-- UPDATE APP CONTENT -->
+      <div id="updateToolContent" class="hidden">
+        <p class="muted" style="margin-top:0;">Select your DRC product to view its process pictures, instructions and completion progress.</p>
+        <div class="selector-row">
+          <div class="field">
+            <select id="productSelect" onchange="onProductChange()">
+              <option value="">-- Select DRC Product --</option>
+              <option value="DRC001">DRC001</option>
+              <option value="DRC002AC">DRC002AC</option>
+              <option value="DRC002AL">DRC002AL</option>
+              <option value="DRC003">DRC003</option>
+              <option value="DRC004BAT">DRC004BAT</option>
+              <option value="DRC004CAP">DRC004CAP</option>
+              <option value="DRC007">DRC007</option>
+              <option value="DRC009">DRC009</option>
+              <option value="DRC010">DRC010</option>
+              <option value="DRC011">DRC011</option>
+              <option value="DRC012G">DRC012G</option>
+              <option value="DRC015">DRC015</option>
+              <option value="DRC018">DRC018</option>
+              <option value="DRC019">DRC019</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="pcbOptions" class="pcb-options hidden">
+          <strong style="color:var(--text);">Select circuit board for <span id="pcbModelTarget"></span></strong>
+          <p class="muted">Choose the board before viewing its process cards.</p>
+          <div class="pcb-buttons">
+            <button type="button" class="pcb-button" onclick="selectPCB('Power PCB')">⚡ Power PCB</button>
+            <button type="button" class="pcb-button" onclick="selectPCB('GSM PCB')">📡 GSM PCB</button>
+          </div>
+        </div>
+
+        <!-- PROGRESS PANEL -->
+        <section id="progressPanel" class="panel hidden" style="margin-top:25px;">
+          <div class="toolbar"><strong id="progressTitle">Migration Progress</strong><span id="progressCount" style="color:var(--green); font-weight:bold;">0 / 10 completed (0%)</span></div>
+          <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+        </section>
+
+        <!-- SECTION HEADING -->
+        <div id="sectionHeading" class="toolbar hidden" style="margin:25px 0 15px">
+          <div><h3 id="productHeading" style="margin:0; font-size:20px;">Product Processes</h3><p class="muted" style="margin:4px 0 0;">Follow procedure for each step, then mark it complete.</p></div>
+          <button class="secondary" onclick="resetProgress()">Reset Progress</button>
+        </div>
+
+        <div id="emptyState" class="empty">
+          <h2>No Product Selected</h2>
+          <p>Select a DRC product above to display its process cards in full screen.</p>
+        </div>
+
+        <section id="processGrid" class="grid"></section>
+      </div>
+
+      <!-- CHECKLIST TOOL CONTENT -->
+      <div id="checklistToolContent" class="hidden">
+        <div class="checklist-sub-container">
+          <!-- PRODUCT INFORMATION -->
+          <div class="sub-card">
+            <h2>Product Information</h2>
+            <label for="productName">Product Name</label>
+            <select id="productName" onchange="productChanged()">
+              <option value="">-- Select Product --</option>
+              <option value="DRC001">DRC001</option>
+              <option value="DRC002AC">DRC002AC</option>
+              <option value="DRC002Al">DRC002Al</option>
+              <option value="DRC003">DRC003</option>
+              <option value="DRC004CAP">DRC004CAP</option>
+              <option value="DRC004BAT">DRC004BAT</option>
+              <option value="DRC009">DRC009</option>
+              <option value="DRC010">DRC010</option>
+              <option value="DRC011">DRC011</option>
+              <option value="DRC012G">DRC012G</option>
+              <option value="DRC018">DRC018</option>
+            </select>
+            <br><br>
+            <label for="productId">Product ID</label>
+            <input type="text" id="productId" placeholder="Example: 241011DN.090(PN)" oninput="checkTestingReady()">
+
+            <div class="id-photo-section">
+              <h3>📷 Product ID Photo (Optional)</h3>
+              <div style="font-size:13px;color:var(--muted);">Photo is optional. You can proceed to checklist without taking a photo.<br>Example: 240808DR.142</div>
+              <div id="idPhotoPlaceholder" class="no-photo">No Product ID photo</div>
+              <img id="idPhotoPreview" class="id-photo-preview" style="display:none;" alt="Product ID Photo">
+              <div class="camera-buttons">
+                <button type="button" class="camera-btn" onclick="openCamera()">📷 OPEN CAMERA</button>
+                <button type="button" class="native-camera-btn" onclick="openNativeCamera()">📸 TAKE PHOTO</button>
+              </div>
+              <input id="nativeCameraInput" type="file" accept="image/*" capture="environment" style="display:none;" onchange="nativePhotoSelected(event)">
+              <div id="ocrStatus" class="ocr-status"></div>
+            </div>
+          </div>
+
+          <!-- PRODUCT TESTING -->
+          <div id="testingSection" class="sub-card" style="display:none;">
+            <div class="bulk-action-bar">
+              <h2>Product Testing</h2>
+              <div class="bulk-btns">
+                <button type="button" class="select-all-tests-btn" onclick="selectAllTests('PASS')">✅ SELECT ALL PASS</button>
+                <button type="button" class="select-all-process-btn" onclick="selectAllProcessChecklist()">☑️ SELECT ALL PROCESS</button>
+              </div>
+            </div>
+            <div id="testsContainer"></div>
+            <br>
+            <div class="sub-card" style="background:var(--card-bg);">
+              <label for="generalRemark">Remark / Anything Else</label>
+              <textarea id="generalRemark" placeholder="Enter any additional remark..."></textarea>
+            </div>
+            <button type="button" class="next-product-btn" onclick="nextProduct()">➡️ NEXT PRODUCT — SAVE</button>
+          </div>
+
+          <!-- HISTORY -->
+          <div class="sub-card">
+            <div class="history-header">
+              <h2>Product Testing History</h2>
+              <div class="history-buttons">
+                <button type="button" class="history-btn select-btn" onclick="selectAllHistory()">☑ SELECT ALL</button>
+                <button type="button" class="history-btn delete-btn" onclick="deleteSelectedHistory()">🗑 DELETE SELECTED</button>
+                <button type="button" class="history-btn clear-btn" onclick="clearHistory()">❌ CLEAR HISTORY</button>
+                <button type="button" class="history-btn excel-btn" onclick="exportExcel()">📊 EXPORT EXCEL</button>
+              </div>
+            </div>
+            <!-- SEARCH INPUT FOR MODEL & PRODUCT ID -->
+            <div class="history-search-row">
+              <input type="text" id="historySearchInput" placeholder="🔍 Search by Model (Product Name) or Product ID..." oninput="renderHistory()">
+            </div>
+            <div class="history-table-wrapper">
+              <table class="checklist-table">
+                <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>No.</th>
+                    <th>Product Name</th>
+                    <th>Product ID</th>
+                    <th>Product ID Photo</th>
+                    <th>Result</th>
+                    <th>Report Problem</th>
+                    <th>Remark</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Edit</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENERAL PLACEHOLDER FOR OTHER TOOLS -->
+      <div id="genericToolContent" class="hidden">
+        <p class="muted" id="genericToolDesc">Tool interface loaded successfully.</p>
+      </div>
+    </div>
+  </main>
+  <footer>VP.Start - Innovation Through Technology | © 2026</footer>
+</section>
+
+<!-- PASSWORD CHANGE MODAL -->
+<div id="passwordModal" class="edit-modal">
+  <div class="edit-content">
+    <h2>Change Password</h2>
+    <div class="edit-row">
+      <label>Current Password</label>
+      <input type="password" id="currentPassword" placeholder="Enter current password">
+    </div>
+    <div class="edit-row">
+      <label>New Password</label>
+      <input type="password" id="newPassword" placeholder="Enter new password">
+    </div>
+    <div class="edit-row">
+      <label>Confirm New Password</label>
+      <input type="password" id="confirmPassword" placeholder="Confirm new password">
+    </div>
+    <div id="passwordError" class="error" style="margin-bottom:10px;"></div>
+    <div class="edit-buttons">
+      <button type="button" class="save-edit" onclick="saveNewPassword()">💾 UPDATE PASSWORD</button>
+      <button type="button" class="cancel-edit" onclick="closePasswordModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div id="cameraModal" class="camera-modal">
+  <div class="camera-content">
+    <div id="cameraVideoWrapper" class="camera-video-wrapper">
+      <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+      <div id="cameraGuide" class="camera-guide"></div>
+      <div class="camera-guide-text">Put Product ID inside the green box</div>
+    </div>
+    <div class="camera-action">
+      <button type="button" class="capture-btn" onclick="capturePhoto()">📸 CAPTURE ID</button>
+      <button type="button" class="close-camera-btn" onclick="closeCamera()">✖ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="edit-modal">
+  <div class="edit-content">
+    <h2>Edit Testing History</h2>
+    <div class="edit-row">
+      <label>Product Name</label>
+      <select id="editProductName">
+        <option value="DRC001">DRC001</option>
+        <option value="DRC002AC">DRC002AC</option>
+        <option value="DRC002Al">DRC002Al</option>
+        <option value="DRC003">DRC003</option>
+        <option value="DRC004CAP">DRC004CAP</option>
+        <option value="DRC004BAT">DRC004BAT</option>
+        <option value="DRC009">DRC009</option>
+        <option value="DRC010">DRC010</option>
+        <option value="DRC011">DRC011</option>
+        <option value="DRC012G">DRC012G</option>
+        <option value="DRC018">DRC018</option>
+      </select>
+    </div>
+    <div class="edit-row">
+      <label>Product ID</label>
+      <input type="text" id="editProductId">
+    </div>
+    <div class="edit-row">
+      <label>Product ID Photo</label>
+      <img id="editProductPhoto" class="id-photo-preview">
+    </div>
+    <div class="edit-row">
+      <label>Overall Result</label>
+      <select id="editResult">
+        <option value="PASS">PASS</option>
+        <option value="FAIL">FAIL</option>
+      </select>
+    </div>
+    <div class="edit-row">
+      <label>Report Problem</label>
+      <textarea id="editProblem"></textarea>
+    </div>
+    <div class="edit-row">
+      <label>Remark / Anything Else</label>
+      <textarea id="editRemark"></textarea>
+    </div>
+    <div class="edit-row">
+      <label>Date / Time</label>
+      <input type="datetime-local" id="editDateTime">
+    </div>
+    <div class="edit-buttons">
+      <button type="button" class="save-edit" onclick="saveEditedHistory()">💾 SAVE CHANGES</button>
+      <button type="button" class="cancel-edit" onclick="closeEditModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   🛠️ CONFIGURATION & CORE LOGIC FOR UPDATE/MAINTENANCE TOOLS
+   ========================================================================== */
+const DRC_CONFIG = {
+  pcbProducts: ["DRC002AC", "DRC002AL", "DRC004BAT", "DRC012G"],
+  sharedModels: {
+    "DRC003": "DRC001",
+    "DRC011": "DRC001",
+    "DRC018": "DRC001"
+  },
+  processContent: {
+    "DRC001": {
+      1: { title: "Process 1", image: "D1_P1.jpg", text: "1. Change LED from red to Yellow.\n2. Change Clock from 20MHz to 16MHz.\n3. Change inductor to 100uH 5A." },
+      2: { title: "Process 2", image: "D1_P2.jpg", text: "4. Change resistor 1k to 10k and resistor 10k to 100k.\n5. Add diode T7 on resistor 10k.\n6. Series diode M7 and SS56." },
+      3: { title: "Process 3", image: "D1_P3.jpg", text: "8. Soldering resistor with PCB GSM.\n9. Soldering with PCB GSM.\n10. Change Resistor to 0ohm." }
+    },
+    "DRC002AL|Power PCB": {
+      1: { title: "Power PCB - Process 1", image: "D2_P1_P.jpg", text: "1. Remove C6 and Change Inductor to 47uH 5A.\n2. Cut trace on arrow point.\n3. Upload Firmware for atmega328p." },
+      2: { title: "Power PCB - Process 2", image: "D2_P2_P.jpg", text: "4. Change diode to SS56 and diode PFT.\n5. Change resistor to 0.25ohm." }
+    },
+    "DRC002AL|GSM PCB": {
+      1: { title: "GSM PCB - Process 1", image: "D2_P1.jpg", text: "1. Remove Battery Holder.\n2. Soldering Watchdog, JST Connector and Soldering jp1 jp2.\n3. Remove Pin at Arow Point." },
+      2: { title: "GSM PCB - Process 2", image: "D2_P2.jpg", text: "4. Remove C17 and soldering resistor 1K.\n5. Cut trace on arrow point.\n6. Change Diode MDD5.0A to AE Littlefuse.\n7. Serie Diode M7 with SS56." },
+      3: { title: "GSM PCB - Process 3", image: "D2_P3.jpg", text: "8. Soldering GSM A7672E with PCB Support." },
+      4: { title: "GSM PCB - Process 4", image: "D2_PA1.png"},
+      5: { title: "GSM PCB - Process 5", image: "D2_PA2.png"},
+      6: { title: "GSM PCB - Process 6", image: "D2_PA3.png"},
+    },
+    "DRC010": {
+      1: { 
+        title: "DRC010 - Process 1", 
+        image: "D10_P1.jpg", 
+        text: "1. Initial component placement and inspection.\n2. Solder main IC and decoupling capacitors.\n3. Verify crystal oscillator and clock signals." 
+      },
+      2: { 
+        title: "DRC010 - Process 2", 
+        image: "D10_P2.jpg", 
+        text: "4. Mount power management components and inductors.\n5. Check trace connections and test power rails.\n6. Flash initial bootloader or firmware." 
+      },
+      3: { 
+        title: "DRC010 - Process 3", 
+        image: "D10_P3.jpg", 
+        text: "7. Solder connectors and peripheral modules.\n8. Perform final quality inspection and functional testing." 
+      }
+    },
+    "DRC002AC|Power PCB": {
+  1: {
+    title: "Power PCB - Process 1",
+    image: "D2_AC1_P.jpg",
+    text: "1. Remove C6 and change inductor to 47uH 5A.\n2. Cut trace at the arrow point.\n3. Upload firmware for ATmega328P."
+  },
+  2: {
+    title: "Power PCB - Process 2",
+    image: "D2_AC2_P.jpg",
+    text: "4. Change diode to SS56 and diode PFT.\n5. Change resistor to 0.25ohm."
+  },
+  3: {
+    title: "Power PCB - Process 3",
+    image: "D2_AC3_P.jpg",
+    text: "Add Power PCB Process 3 instructions here."
+  },
+  4: {
+    title: "Power PCB - Process 4",
+    image: "D2_AC4_P.jpg",
+    text: "Add Power PCB Process 4 instructions here."
+  },
+  5: {
+    title: "Power PCB - Process 5",
+    image: "D2_AC5_P.jpg",
+    text: "Add Power PCB Process 5 instructions here."
+  },
+  6: {
+    title: "Power PCB - Process 6",
+    image: "D2_AC6_P.jpg",
+    text: "Add Power PCB Process 6 instructions here."
+  },
+  7: {
+    title: "Power PCB - Process 7",
+    image: "D2_AC7_P.jpg",
+    text: "Add Power PCB Process 7 instructions here."
+  },
+  8: {
+    title: "Power PCB - Process 8",
+    image: "D2_AC8_P.jpg",
+    text: "Add Power PCB Process 8 instructions here."
+  },
+  9: {
+    title: "Power PCB - Process 9",
+    image: "D2_AC9_P.jpg",
+    text: "Add Power PCB Process 9 instructions here."
+  },
+  10: {
+    title: "Power PCB - Process 10",
+    image: "D2_AC10_P.jpg",
+    text: "Add Power PCB Process 10 instructions here."
+  }
+},
+
+"DRC002AC|GSM PCB": {
+  1: {
+    title: "GSM PCB - Process 1",
+    image: "D2_AC1_G.jpg",
+    text: "1. Change LED from red to yellow.\n2. Change clock from 20MHz to 16MHz.\n3. Change inductor to 100uH 5A."
+  },
+  2: {
+    title: "GSM PCB - Process 2",
+    image: "D2_AC2_G.jpg",
+    text: "4. Change resistor 1k to 10k and resistor 10k to 100k.\n5. Add diode T7 on the 10k resistor.\n6. Connect diode M7 and SS56 in series."
+  },
+  3: {
+    title: "GSM PCB - Process 3",
+    image: "D2_AL3_G.jpg",
+    text: "7. Solder the required resistors to the GSM PCB.\n8. Complete the required GSM PCB soldering.\n9. Change the specified resistor to 0 ohm."
+  },
+  4: {
+    title: "GSM PCB - Process 4",
+    image: "D2_PA1.png",
+    text: "Add GSM PCB Process 4 instructions here."
+  },
+  5: {
+    title: "GSM PCB - Process 5",
+    image: "D2_PA2.png",
+    text: "Add GSM PCB Process 5 instructions here."
+  },
+  6: {
+    title: "GSM PCB - Process 6",
+    image: "D2_PA3.png",
+    text: "Add GSM PCB Process 6 instructions here."
+  },
+  7: {
+    title: "GSM PCB - Process 7",
+    image: "D2_PA4.png",
+    text: "Add GSM PCB Process 7 instructions here."
+  },
+  8: {
+    title: "GSM PCB - Process 8",
+    image: "D2_PA5.png",
+    text: "Add GSM PCB Process 8 instructions here."
+  },
+  9: {
+    title: "GSM PCB - Process 9",
+    image: "D2_PA6.png",
+    text: "Add GSM PCB Process 9 instructions here."
+  },
+  10: {
+    title: "GSM PCB - Process 10",
+    image: "D2_PA7.png",
+    text: "Add GSM PCB Process 10 instructions here."
+  }
+},
+    }
+  };
+
+const STORAGE_KEY = "vpStartDRCCompletion_v7";
+let completedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+let selectedProduct = "";
+let selectedPCB = "";
+let currentPassword = localStorage.getItem("vpAdminPass") || "1234";
+
+if(localStorage.getItem("vpDarkMode") === "true"){
+  document.documentElement.setAttribute("data-theme", "dark");
+}
+
+function toggleMenu(e){
+  e.stopPropagation();
+  const dropdown = document.getElementById("menuDropdown");
+  dropdown.classList.toggle("show");
+}
+
+window.addEventListener("click", () => {
+  const dropdown = document.getElementById("menuDropdown");
+  if(dropdown && dropdown.classList.contains("show")){
+    dropdown.classList.remove("show");
+  }
+});
+
+function toggleDarkMode(){
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  if(isDark){
+    document.documentElement.removeAttribute("data-theme");
+    localStorage.setItem("vpDarkMode", "false");
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("vpDarkMode", "true");
+  }
+}
+
+function openPasswordModal(){
+  document.getElementById("currentPassword").value = "";
+  document.getElementById("newPassword").value = "";
+  document.getElementById("confirmPassword").value = "";
+  document.getElementById("passwordError").textContent = "";
+  document.getElementById("passwordModal").style.display = "block";
+}
+
+function closePasswordModal(){
+  document.getElementById("passwordModal").style.display = "none";
+}
+
+function saveNewPassword(){
+  const curr = document.getElementById("currentPassword").value.trim();
+  const neo = document.getElementById("newPassword").value.trim();
+  const conf = document.getElementById("confirmPassword").value.trim();
+  const err = document.getElementById("passwordError");
+
+  if(curr !== currentPassword){
+    err.textContent = "Current password is incorrect.";
+    return;
+  }
+  if(!neo || neo.length < 4){
+    err.textContent = "New password must be at least 4 characters.";
+    return;
+  }
+  if(neo !== conf){
+    err.textContent = "New passwords do not match.";
+    return;
+  }
+
+  currentPassword = neo;
+  localStorage.setItem("vpAdminPass", currentPassword);
+  alert("Password successfully updated!");
+  closePasswordModal();
+}
+
+function doLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById("username").value.trim();
+  const p = document.getElementById("password").value.trim();
+  if(u === "Vpstart" && p === currentPassword) {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+  } else {
+    document.getElementById("loginError").textContent = "Invalid username or password";
+  }
+}
+
+function doLogout() {
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+  document.getElementById("password").value = "";
+}
+
+function openTool(toolName) {
+  document.getElementById("homePanel").classList.add("hidden");
+  const appPanel = document.getElementById("appPanel");
+  appPanel.classList.remove("hidden");
+  appPanel.classList.add("fullscreen-mode");
+  
+  const titles = { update: "Update DRC to PLUM", checklist: "Checklist DRC Testing", maintenance: "Maintenance Process Tips" };
+  document.getElementById("appTitle").textContent = titles[toolName] || "DRC Tool";
+
+  const isUpdate = toolName === "update" || toolName === "maintenance";
+  const isChecklist = toolName === "checklist";
+
+  document.getElementById("updateToolContent").classList.toggle("hidden", !isUpdate);
+  document.getElementById("checklistToolContent").classList.toggle("hidden", !isChecklist);
+  document.getElementById("genericToolContent").classList.toggle("hidden", isUpdate || isChecklist);
+
+  if(isUpdate) {
+    renderProduct();
+  } else if(isChecklist) {
+    renderHistory();
+  } else {
+    document.getElementById("genericToolDesc").textContent = `Active module for ${titles[toolName]} loaded successfully.`;
+  }
+}
+
+function closeTool() {
+  const appPanel = document.getElementById("appPanel");
+  appPanel.classList.add("hidden");
+  appPanel.classList.remove("fullscreen-mode");
+  document.getElementById("homePanel").classList.remove("hidden");
+}
+
+function onProductChange() {
+  selectedProduct = document.getElementById("productSelect").value;
+  selectedPCB = "";
+  renderProduct();
+}
+
+function selectPCB(pcb) {
+  selectedPCB = pcb;
+  renderProduct();
+}
+
+function getCurrentKey() {
+  if(DRC_CONFIG.pcbProducts.includes(selectedProduct)) {
+    return selectedProduct + "|" + selectedPCB;
+  }
+  return selectedProduct;
+}
+
+function renderProduct() {
+  const requiresPCB = DRC_CONFIG.pcbProducts.includes(selectedProduct);
+  const pcbBox = document.getElementById("pcbOptions");
+  pcbBox.classList.toggle("hidden", !requiresPCB);
+  document.getElementById("pcbModelTarget").textContent = selectedProduct;
+
+  document.querySelectorAll(".pcb-button").forEach(btn => {
+    btn.classList.toggle("active", btn.textContent.includes(selectedPCB));
+  });
+
+  const grid = document.getElementById("processGrid");
+  grid.replaceChildren();
+
+  if(!selectedProduct || (requiresPCB && !selectedPCB)) {
+    document.getElementById("emptyState").classList.remove("hidden");
+    document.getElementById("progressPanel").classList.add("hidden");
+    document.getElementById("sectionHeading").classList.add("hidden");
+    document.getElementById("emptyState").querySelector("h2").textContent = selectedProduct ? "Select a Circuit Board" : "No Product Selected";
+    document.getElementById("emptyState").querySelector("p").textContent = selectedProduct ? "Choose Power PCB or GSM PCB above." : "Select a DRC product above to view process instructions.";
+    return;
+  }
+
+  document.getElementById("emptyState").classList.add("hidden");
+  document.getElementById("progressPanel").classList.remove("hidden");
+  document.getElementById("sectionHeading").classList.remove("hidden");
+
+  const key = getCurrentKey();
+  const baseKey = DRC_CONFIG.sharedModels[selectedProduct] || (requiresPCB ? selectedProduct + "|" + selectedPCB : selectedProduct);
+  const customContent = DRC_CONFIG.processContent[baseKey] || {};
+
+  const processes = Array.from({length: 10}, (_, i) => {
+    const stepNum = i + 1;
+    const custom = customContent[stepNum] || {};
+    return {
+      title: custom.title || `Process ${stepNum}`,
+      image: custom.image || "",
+      text: custom.text || `Add approved instructions for Process ${stepNum} in code config.`
+    };
+  });
+
+  const states = Array.isArray(completedData[key]) ? completedData[key] : Array(10).fill(false);
+  document.getElementById("productHeading").textContent = key.replace("|", " — ") + " Processes";
+
+  processes.forEach((proc, index) => {
+    const isDone = Boolean(states[index]);
+    const card = document.createElement("article");
+    card.className = "process-card" + (isDone ? " done" : "");
+
+    const heading = document.createElement("div");
+    heading.className = "toolbar";
+    heading.innerHTML = `<h3 class="card-title">${index + 1}. ${proc.title}</h3><span class="step-tag">${isDone ? "Completed" : "Step " + (index+1)}</span>`;
+
+    const imgWrap = document.createElement("div");
+    imgWrap.className = "process-image-wrap";
+    const img = document.createElement("img");
+    img.className = "process-image";
+    img.alt = proc.title;
+    
+    const fallbackSvg = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400"><rect width="700" height="400" fill="#17202a"/><text x="350" y="200" font-size="24" fill="white" text-anchor="middle">Step ${index+1}:${proc.title}</text></svg>`)}`;
+    img.onerror = () => { if(img.src !== fallbackSvg) img.src = fallbackSvg; };
+    img.src = proc.image || fallbackSvg;
+    imgWrap.appendChild(img);
+
+    const inst = document.createElement("div");
+    inst.className = "instructions";
+    inst.textContent = proc.text;
+
+    const label = document.createElement("label");
+    label.className = "complete";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = isDone;
+
+    checkbox.addEventListener("change", () => {
+      let updated = Array.isArray(completedData[key]) ? [...completedData[key]] : Array(10).fill(false);
+      updated[index] = checkbox.checked;
+      completedData[key] = updated;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(completedData));
+      renderProduct();
+    });
+
+    label.append(checkbox, document.createTextNode(isDone ? "Completed" : "Mark as completed"));
+    card.append(heading, imgWrap, inst, label);
+    grid.appendChild(card);
+  });
+
+  updateProgress(key, processes);
+}
+
+function updateProgress(key, processes) {
+  const states = completedData[key] || [];
+  const completed = states.filter(Boolean).length;
+  const total = processes.length;
+  const pct = Math.round((completed / total) * 100);
+
+  document.getElementById("progressTitle").textContent = key.replace("|", " — ") + " Progress";
+  document.getElementById("progressCount").textContent = `${completed} / ${total} completed (${pct}%)`;
+  document.getElementById("progressFill").style.width = pct + "%";
+}
+
+function resetProgress() {
+  const key = getCurrentKey();
+  if(!key || !confirm(`Reset completion status for ${key.replace("|", " — ")}?`)) return;
+  completedData[key] = Array(10).fill(false);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(completedData));
+  renderProduct();
+}
+
+/* ==========================================================================
+   📋 CHECKLIST TOOL LOGIC
+   ========================================================================== */
+let history = JSON.parse(localStorage.getItem("drcTestingHistory") || "[]");
+let productIDPhoto = "";
+let cameraStream = null;
+let editingHistoryIndex = -1;
+
+const normalTests = ["Power in", "Button Register/Format", "Call", "Sound", "Watchdog/Atiny", "OTA", "Add to Plum", "Check Control form", "Call check sound after OTA", "Format", "Alarm test"];
+const drc002Tests = ["Power IN", "Check status on membrane", "Control Switch ON/OFF on Remote and Local", "Call test watchdog", "OTA", "Add to Plum App", "Check Status on Control System", "Control Switch ON/OFF from App", "Call Control Switch ON/OFF", "Check Float charge", "Format", "Alarm test"];
+const drc004Tests = ["Power IN", "Format", "Check LED status", "Call test watchdog", "OTA", "Add to Plum App", "Check Status on Control System", "Check charge System", "BAT/CAP testing", "Format", "Read from Meter", "Alarm test"];
+const drc009Tests = ["Power IN", "Format", "Check LED status", "Call test watchdog", "OTA", "Add to Plum App", "Check Status on Control System", "Control Switch ON/OFF", "Ethernet", "Read from Sicam", "Format", "Alarm test"];
+
+function getTests(product){
+    if(product === "DRC002AC" || product === "DRC002Al") return drc002Tests;
+    if(product === "DRC004CAP" || product === "DRC004BAT") return drc004Tests;
+    if(product === "DRC009") return drc009Tests;
+    return normalTests;
+}
+
+function productChanged(){
+    productIDPhoto = "";
+    document.getElementById("idPhotoPreview").style.display = "none";
+    document.getElementById("idPhotoPlaceholder").style.display = "flex";
+    document.getElementById("ocrStatus").innerHTML = "";
+    checkTestingReady();
+}
+
+function checkTestingReady(){
+    const product = document.getElementById("productName").value;
+    const id = document.getElementById("productId").value.trim();
+    if(product && id){
+        showTests();
+    } else {
+        document.getElementById("testingSection").style.display = "none";
+    }
+}
+
+function showTests(){
+    const product = document.getElementById("productName").value;
+    const tests = getTests(product);
+    const container = document.getElementById("testsContainer");
+    container.innerHTML = "";
+    tests.forEach((test, index) => {
+        container.innerHTML += `
+            <div class="test-card">
+                <div class="test-title">${index + 1}. ${test}</div>
+                <input type="hidden" id="testResult_${index}">
+                <div class="result-buttons">
+                    <button type="button" id="pass_${index}" class="result-btn pass-btn" onclick="selectResult(${index},'PASS')">PASS</button>
+                    <button type="button" id="fail_${index}" class="result-btn fail-btn" onclick="selectResult(${index},'FAIL')">FAIL</button>
+                    <button type="button" id="notuse_${index}" class="result-btn notuse-btn" onclick="selectResult(${index},'NOT USE')">NOT USE</button>
+                </div>
+                <div id="problemBox_${index}" class="problem-box">
+                    <label>Failure Problem</label>
+                    <textarea id="problem_${index}" placeholder="Enter failure reason..."></textarea>
+                </div>
+            </div>`;
+    });
+    document.getElementById("testingSection").style.display = "block";
+}
+
+function selectResult(index, result){
+    ["pass", "fail", "notuse"].forEach(type => {
+        document.getElementById(`${type}_${index}`).classList.remove("selected");
+    });
+    document.getElementById(`${result.toLowerCase().replace(' ', '')}_${index}`).classList.add("selected");
+    document.getElementById(`testResult_${index}`).value = result;
+
+    const box = document.getElementById(`problemBox_${index}`);
+    const problem = document.getElementById(`problem_${index}`);
+    if(result === "FAIL"){
+        box.style.display = "block";
+        problem.focus();
+    } else {
+        box.style.display = "none";
+        problem.value = "";
+    }
+}
+
+function selectAllTests(result){
+    const product = document.getElementById("productName").value;
+    const tests = getTests(product);
+    tests.forEach((_, index) => {
+        selectResult(index, result);
+    });
+}
+
+function selectAllProcessChecklist(){
+    const product = document.getElementById("productName").value;
+    if(!product){ alert("Please select Product Name first."); return; }
+    const tests = getTests(product);
+    tests.forEach((_, index) => {
+        selectResult(index, 'PASS');
+    });
+}
+
+async function openCamera(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        alert("Browser camera is not available.\n\nPlease use the green TAKE PHOTO button.");
+        return;
+    }
+    try{
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video:{ facingMode:{ ideal:"environment" }, width:{ ideal:1920 }, height:{ ideal:1080 } },
+            audio:false
+        });
+        const video = document.getElementById("cameraVideo");
+        video.srcObject = cameraStream;
+        document.getElementById("cameraModal").style.display = "flex";
+        await new Promise(resolve => {
+            if(video.readyState >= 2 && video.videoWidth > 0) resolve();
+            else video.onloadedmetadata = () => resolve();
+        });
+    } catch(error){
+        alert("Camera could not be opened.\n\nPlease use the green TAKE PHOTO button.");
+    }
+}
+
+function closeCamera(){
+    if(cameraStream){
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+    document.getElementById("cameraVideo").srcObject = null;
+    document.getElementById("cameraModal").style.display = "none";
+}
+
+function capturePhoto(){
+    const video = document.getElementById("cameraVideo");
+    if(!video.videoWidth || !video.videoHeight){
+        alert("Camera is not ready yet.");
+        return;
+    }
+    const sourceWidth = video.videoWidth;
+    const sourceHeight = video.videoHeight;
+    const cropX = Math.round(sourceWidth * 0.05);
+    const cropY = Math.round(sourceHeight * 0.38);
+    const cropWidth = Math.round(sourceWidth * 0.90);
+    const cropHeight = Math.round(sourceHeight * 0.24);
+    const outputWidth = 1400;
+    const outputHeight = Math.round(outputWidth * cropHeight / cropWidth);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, outputWidth, outputHeight);
+
+    productIDPhoto = canvas.toDataURL("image/jpeg", 0.95);
+    showIDPhoto(productIDPhoto);
+    closeCamera();
+    readProductIDFromPhoto(productIDPhoto);
+}
+
+function openNativeCamera(){
+    document.getElementById("nativeCameraInput").click();
+}
+
+function nativePhotoSelected(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){
+            const canvas = document.createElement("canvas");
+            const maxWidth = 1400;
+            let width = img.width;
+            let height = img.height;
+            if(width > maxWidth){
+                height = Math.round(height * maxWidth / width);
+                width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            productIDPhoto = canvas.toDataURL("image/jpeg", 0.95);
+            showIDPhoto(productIDPhoto);
+            readProductIDFromPhoto(productIDPhoto);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+}
+
+function showIDPhoto(imageData){
+    const preview = document.getElementById("idPhotoPreview");
+    preview.src = imageData;
+    preview.style.display = "block";
+    document.getElementById("idPhotoPlaceholder").style.display = "none";
+}
+
+async function readProductIDFromPhoto(imageData){
+    const status = document.getElementById("ocrStatus");
+    status.className = "ocr-status";
+    status.innerHTML = "🔎 Reading Product ID...";
+    try{
+        const result = await Tesseract.recognize(imageData, "eng", {
+            logger: function(info){
+                if(info.status){
+                    status.innerHTML = "🔎 " + info.status + " " + Math.round((info.progress || 0) * 100) + "%";
+                }
+            }
+        });
+        const text = result.data.text || "";
+        const detected = extractProductID(text);
+        if(detected){
+            document.getElementById("productId").value = detected;
+            status.className = "ocr-detected";
+            status.innerHTML = "✅ Product ID: " + escapeHtml(detected);
+            checkTestingReady();
+        } else {
+            status.className = "ocr-status";
+            status.innerHTML = "⚠️ ID not detected. Please enter Product ID manually.";
+        }
+    } catch(error){
+        status.innerHTML = "⚠️ OCR failed. Please enter Product ID manually.";
+    }
+}
+
+function extractProductID(text){
+    if(!text) return "";
+    let cleaned = text.toUpperCase().replace(/[^A-Z0-9.\(\)\s\-]/g, " ");
+    cleaned = cleaned.replace(/\s*\.\s*/g, ".").replace(/\s*\(\s*/g, "(").replace(/\s*\)\s*/g, ")");
+    const patterns = [
+        /\b\d{6}[A-Z]{2}\.\d{3}\([A-Z0-9]{1,5}\)\b/,
+        /\b\d{6}[A-Z]{2}\.\d{3}\b/,
+        /\b\d{6}[A-Z]{2}\.\d{2,4}\([A-Z0-9]{1,5}\)\b/,
+        /\b\d{6}[A-Z]{2}\.\d{2,4}\b/
+    ];
+    for(const pattern of patterns){
+        const match = cleaned.match(pattern);
+        if(match) return normalizeProductID(match[0]);
+    }
+    const tokens = cleaned.split(/\s+/).filter(Boolean);
+    for(let i=0; i<tokens.length; i++){
+        let candidate = tokens[i];
+        for(let j=i+1; j<Math.min(i+5, tokens.length); j++){
+            candidate += tokens[j];
+            const normalized = normalizeProductID(candidate);
+            if(/^\d{6}[A-Z]{2}\.\d{2,4}(\([A-Z0-9]{1,5}\))?$/.test(normalized)) return normalized;
+        }
+    }
+    return "";
+}
+
+function normalizeProductID(value){
+    if(!value) return "";
+    let id = value.toUpperCase().replace(/\s+/g, "").replace(/-/g, "");
+    const match = id.match(/^(\d{6})([A-Z]{2})\.(\d{2,4})(\([A-Z0-9]{1,5}\))?$/);
+    if(match) return match[1] + match[2] + "." + match[3] + (match[4] || "");
+    return id;
+}
+
+function nextProduct(){
+    const product = document.getElementById("productName").value;
+    const productId = document.getElementById("productId").value.trim();
+    if(!product){ alert("Please select Product Name."); return; }
+    if(!productId){ alert("Please enter or read Product ID."); return; }
+
+    const tests = getTests(product);
+    const testData = [];
+    let overallResult = "PASS";
+
+    for(let i=0; i<tests.length; i++){
+        const result = document.getElementById(`testResult_${i}`).value;
+        const problem = document.getElementById(`problem_${i}`).value.trim();
+        if(!result){ alert("Please complete test " + (i + 1) + ": " + tests[i]); return; }
+        if(result === "FAIL" && !problem){ alert("Please enter the failure problem for:\n" + tests[i]); return; }
+        if(result === "FAIL") overallResult = "FAIL";
+        testData.push({ test: tests[i], result: result, problem: problem });
+    }
+
+    const now = new Date();
+    const record = {
+        productName: product,
+        productId: productId,
+        productIDPhoto: productIDPhoto || "",
+        result: overallResult,
+        problem: testData.filter(x => x.result === "FAIL").map(x => x.test + ": " + x.problem).join("\n"),
+        remark: document.getElementById("generalRemark").value.trim(),
+        dateTime: now.toISOString(),
+        tests: testData
+    };
+
+    history.push(record);
+    localStorage.setItem("drcTestingHistory", JSON.stringify(history));
+
+    renderHistory();
+
+    document.getElementById("productId").value = "";
+    productIDPhoto = "";
+    document.getElementById("idPhotoPreview").style.display = "none";
+    document.getElementById("idPhotoPlaceholder").style.display = "flex";
+    document.getElementById("ocrStatus").innerHTML = "";
+    document.getElementById("generalRemark").value = "";
+    document.getElementById("testingSection").style.display = "none";
+    document.getElementById("testsContainer").innerHTML = "";
+
+    alert("Testing saved successfully! Ready for the next product.");
+}
+
+function renderHistory(){
+    const searchTerm = document.getElementById("historySearchInput") ? document.getElementById("historySearchInput").value.trim().toLowerCase() : "";
+    const body = document.getElementById("historyBody");
+    body.innerHTML = "";
+    
+    history.forEach((item, index) => {
+        const productName = String(item.productName || "").toLowerCase();
+        const productId = String(item.productId || "").toLowerCase();
+
+        // Filter based on search input (matches Product Name or Product ID)
+        if(searchTerm && !productName.includes(searchTerm) && !productId.includes(searchTerm)){
+            return;
+        }
+
+        const date = new Date(item.dateTime);
+        const resultClass = item.result === "PASS" ? "pass-result" : "fail-result";
+        let photo = item.productIDPhoto ? `<img class="history-photo" src="${item.productIDPhoto}" onclick="viewPhoto(${index})" alt="Product ID">` : "No Photo";
+
+        body.innerHTML += `
+            <tr>
+                <td><input type="checkbox" class="history-check" data-index="${index}"></td>
+                <td>${index + 1}</td>
+                <td>${escapeHtml(item.productName)}</td>
+                <td>${escapeHtml(item.productId)}</td>
+                <td>${photo}</td>
+                <td class="${resultClass}">${item.result}</td>
+                <td style="white-space:pre-line;">${escapeHtml(item.problem || "")}</td>
+                <td>${escapeHtml(item.remark || "")}</td>
+                <td>${date.toLocaleDateString()}</td>
+                <td>${date.toLocaleTimeString()}</td>
+                <td><button type="button" class="edit-btn" onclick="editHistory(${index})">✏️ EDIT</button></td>
+            </tr>`;
+    });
+}
+
+function escapeHtml(value){
+    return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function viewPhoto(index){
+    const item = history[index];
+    if(!item || !item.productIDPhoto) return;
+    const win = window.open("");
+    if(win){
+        win.document.write(`<html><head><title>Product ID Photo</title><style>body{margin:0;background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh}img{max-width:95%;max-height:95vh}</style></head><body><img src="${item.productIDPhoto}"></body></html>`);
+    }
+}
+
+function selectAllHistory(){
+    document.querySelectorAll(".history-check").forEach(box => box.checked = true);
+}
+
+function deleteSelectedHistory(){
+    const boxes = document.querySelectorAll(".history-check:checked");
+    if(boxes.length === 0){ alert("Please select history to delete."); return; }
+    if(!confirm("Delete selected history?")) return;
+    const indexes = Array.from(boxes).map(box => Number(box.dataset.index)).sort((a,b)=>b-a);
+    indexes.forEach(index => history.splice(index, 1));
+    localStorage.setItem("drcTestingHistory", JSON.stringify(history));
+    renderHistory();
+}
+
+function clearHistory(){
+    if(history.length === 0){ alert("History is already empty."); return; }
+    if(!confirm("Delete ALL testing history?")) return;
+    history = [];
+    localStorage.removeItem("drcTestingHistory");
+    renderHistory();
+}
+
+function editHistory(index){
+    editingHistoryIndex = index;
+    const item = history[index];
+    document.getElementById("editProductName").value = item.productName;
+    document.getElementById("editProductId").value = item.productId;
+    document.getElementById("editProductPhoto").src = item.productIDPhoto || "";
+    document.getElementById("editResult").value = item.result;
+    document.getElementById("editProblem").value = item.problem || "";
+    document.getElementById("editRemark").value = item.remark || "";
+    const localDate = new Date(item.dateTime);
+    const offset = localDate.getTimezoneOffset();
+    const adjusted = new Date(localDate.getTime() - offset * 60000);
+    document.getElementById("editDateTime").value = adjusted.toISOString().slice(0, 16);
+    document.getElementById("editModal").style.display = "block";
+}
+
+function closeEditModal(){
+    document.getElementById("editModal").style.display = "none";
+    editingHistoryIndex = -1;
+}
+
+function saveEditedHistory(){
+    if(editingHistoryIndex < 0) return;
+    const item = history[editingHistoryIndex];
+    item.productName = document.getElementById("editProductName").value;
+    item.productId = document.getElementById("editProductId").value.trim();
+    item.result = document.getElementById("editResult").value;
+    item.problem = document.getElementById("editProblem").value.trim();
+    item.remark = document.getElementById("editRemark").value.trim();
+    const dateTime = document.getElementById("editDateTime").value;
+    if(dateTime) item.dateTime = new Date(dateTime).toISOString();
+    localStorage.setItem("drcTestingHistory", JSON.stringify(history));
+    closeEditModal();
+    renderHistory();
+    alert("History updated successfully.");
+}
+
+async function exportExcel(){
+    if(history.length === 0){ alert("There is no history to export."); return; }
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("DRC Testing History");
+    worksheet.columns = [
+        { header: "Product Name", key: "productName", width: 18 },
+        { header: "Product ID", key: "productId", width: 25 },
+        { header: "Product ID Photo", key: "photo", width: 28 },
+        { header: "Result", key: "result", width: 14 },
+        { header: "Report Problem", key: "problem", width: 45 },
+        { header: "Remark / Anything Else", key: "remark", width: 35 },
+        { header: "Date / Time", key: "dateTime", width: 25 }
+    ];
+
+    history.forEach(item => {
+        const row = worksheet.addRow({
+            productName: item.productName,
+            productId: item.productId,
+            photo: "",
+            result: item.result,
+            problem: item.problem || "",
+            remark: item.remark || "",
+            dateTime: new Date(item.dateTime).toLocaleString()
+        });
+        row.height = 90;
+        if(item.productIDPhoto){
+            try{
+                const imageId = workbook.addImage({ base64: item.productIDPhoto, extension: "jpeg" });
+                worksheet.addImage(imageId, { tl: { col: 2, row: row.number - 1 }, ext: { width: 180, height: 75 } });
+            }catch(error){}
+        }
+        const resultCell = row.getCell(4);
+        resultCell.font = { bold: true, color: { argb: item.result === "PASS" ? "15803D" : "DC2626" } };
+    });
+
+    worksheet.getRow(1).font = { bold: true, color: { argb: "FFFFFF" } };
+    worksheet.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "1E3A8A" } };
+    worksheet.getRow(1).alignment = { horizontal: "center", vertical: "middle" };
+    worksheet.views = [{ state: "frozen", ySplit: 1 }];
+    worksheet.autoFilter = { from: "A1", to: "G1" };
+
+    worksheet.eachRow(row => {
+        row.eachCell(cell => {
+            cell.alignment = { vertical: "middle", wrapText: true };
+            cell.border = {
+                top: { style: "thin", color: { argb: "CBD5E1" } },
+                bottom: { style: "thin", color: { argb: "CBD5E1" } },
+                left: { style: "thin", color: { argb: "CBD5E1" } },
+                right: { style: "thin", color: { argb: "CBD5E1" } }
+            };
+        });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "DRC_Testing_History.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
