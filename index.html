@@ -9,24 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
-<!-- Tailwind CSS & Lucide Icons for Weekly Workspace -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                colors: {
-                    navy: '#12345a',
-                    blue: '#1e4d82',
-                    border: '#d5deea'
-                }
-            }
-        }
-    }
-</script>
-<script src="https://unpkg.com/lucide@latest"></script>
-
 <style>
 :root{--navy:#12345a;--blue:#1e4d82;--bg:#f1f5f9;--border:#d5deea;--text:#1e293b;--green:#16845b;--muted:#64748b;--panel-bg:rgba(255, 255, 255, 0.92);--card-bg:#ffffff;}
 [data-theme="dark"]{--navy:#0f172a;--blue:#3b82f6;--bg:#090d16;--border:#334155;--text:#f8fafc;--green:#22c55e;--muted:#94a3b8;--panel-bg:rgba(15, 23, 42, 0.92);--card-bg:#1e293b;}
@@ -417,19 +399,6 @@ footer{
 .save-edit{flex:1;background:#16a34a;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
 .cancel-edit{flex:1;background:#64748b;color:white;border:0;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer}
 
-/* FULLSCREEN WORKSPACE MODAL */
-#weeklyWorkspaceModal {
-  display: none;
-  position: fixed;
-  z-index: 999999;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(16px);
-}
-
 @media(max-width:750px){.grid{grid-template-columns:1fr}header{padding:15px}h1{font-size:20px}main{padding:10px}}
 </style>
 </head>
@@ -471,7 +440,6 @@ footer{
     <div class="menu-container">
       <button id="menuBtn" onclick="toggleMenu(event)">⚙️ Menu ▼</button>
       <div id="menuDropdown" class="menu-dropdown">
-        <button type="button" class="menu-item" onclick="openWeeklyWorkspace()">📝 Weekly Note</button>
         <button type="button" class="menu-item" onclick="toggleDarkMode()">🌙 Dark Mode</button>
         <button type="button" class="menu-item" onclick="openPasswordModal()">🔑 Change Password</button>
         <button type="button" class="menu-item" onclick="doLogout()">🚪 Logout</button>
@@ -651,273 +619,6 @@ footer{
   </main>
   <footer>VP.Start - Innovation Through Technology | © 2026</footer>
 </section>
-
-<!-- WEEKLY WORKSPACE FULLSCREEN MODAL -->
-<div id="weeklyWorkspaceModal">
-    <div class="flex h-full overflow-hidden text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 font-sans">
-        
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 transition-all duration-300 md:translate-x-0 -translate-x-full fixed md:relative z-30 h-full">
-            
-            <!-- Sidebar Header -->
-            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                    <div class="p-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-lg">
-                        <i data-lucide="calendar-range" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-base tracking-tight leading-tight">Weekly Workspace</h1>
-                        <p class="text-[11px] text-slate-400">VP.Start Notes & Planning</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-1">
-                    <button onclick="closeWeeklyWorkspace()" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" title="Close Workspace">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Workspace Mode Switcher -->
-            <div class="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-                <div class="grid grid-cols-2 gap-1 bg-slate-200/70 dark:bg-slate-800 p-1 rounded-lg">
-                    <button id="mode-btn-weekly" class="py-1.5 text-xs font-semibold rounded-md transition text-slate-900 dark:text-white bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center gap-1.5">
-                        <i data-lucide="notebook-pen" class="w-3.5 h-3.5"></i>
-                        <span>Weekly Notes</span>
-                    </button>
-                    <button id="mode-btn-planning" class="py-1.5 text-xs font-semibold rounded-md transition text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5">
-                        <i data-lucide="target" class="w-3.5 h-3.5"></i>
-                        <span>Planning</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- WEEKLY NOTES SIDEBAR CONTENT -->
-            <div id="sidebar-weekly-content" class="flex-1 flex flex-col overflow-hidden">
-                <!-- Week Selector & Jump -->
-                <div class="p-4 border-b border-slate-100 dark:border-slate-800 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <label for="week-picker" class="text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider block">Select Week</label>
-                            <span class="text-[10px] text-slate-400 block">Jump to other week</span>
-                        </div>
-                        <button id="btn-jump-this-week" class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline">This Week</button>
-                    </div>
-                    <input type="week" id="week-picker" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
-                </div>
-
-                <!-- Search Notes -->
-                <div class="px-4 pt-3 pb-2">
-                    <div class="relative">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="search-input" placeholder="Search saved weeks..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
-                    </div>
-                </div>
-
-                <!-- Saved Weeks List -->
-                <div class="flex-1 overflow-y-auto px-4 py-2 space-y-1">
-                    <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 pt-1 flex justify-between items-center">
-                        <span>Saved Weeks</span>
-                        <span id="saved-count-badge" class="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded">0</span>
-                    </div>
-                    <div id="notes-history-list" class="space-y-1 text-sm">
-                        <!-- Dynamic Saved Weeks -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- PLANNING SIDEBAR CONTENT -->
-            <div id="sidebar-planning-content" class="flex-1 flex flex-col overflow-hidden hidden">
-                <div class="p-4 border-b border-slate-100 dark:border-slate-800 space-y-1">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Planning Views</span>
-                    <nav class="space-y-1 pt-2">
-                        <button id="plan-tab-roadmap" class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
-                            <span class="flex items-center gap-2"><i data-lucide="compass" class="w-4 h-4"></i> Strategic Plan</span>
-                            <span id="badge-roadmap-count" class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">0</span>
-                        </button>
-                        <button id="plan-tab-checklists" class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <span class="flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i> Goal Checklists</span>
-                            <span id="badge-checklists-count" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">0</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-                    <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Quick Actions</div>
-                    <button id="btn-insert-active-plan" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 transition">
-                        <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-500"></i>
-                        <span>Link Goals to Weekly Note</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Sidebar Footer / Data Backup -->
-            <div class="p-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                <button id="btn-export-backup" class="hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-1 transition" title="Export JSON Data Backup">
-                    <i data-lucide="database" class="w-3.5 h-3.5"></i> Backup
-                </button>
-                <label for="import-backup-file" class="hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer transition" title="Restore JSON Data Backup">
-                    <i data-lucide="upload" class="w-3.5 h-3.5"></i> Restore
-                </label>
-                <input type="file" id="import-backup-file" accept=".json" class="hidden">
-            </div>
-
-        </aside>
-
-        <!-- MAIN WORKSPACE -->
-        <main class="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-950">
-            
-            <!-- VIEW 1: WEEKLY NOTES VIEW -->
-            <div id="view-weekly-notes" class="flex-1 flex flex-col h-full overflow-hidden">
-                <!-- Top Navbar / Week Display Header -->
-                <header class="h-16 border-b border-slate-100 dark:border-slate-800/80 px-4 md:px-8 flex items-center justify-between shrink-0">
-                    <div class="flex items-center space-x-3">
-                        <button id="open-sidebar-btn" class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <i data-lucide="menu" class="w-5 h-5"></i>
-                        </button>
-
-                        <!-- Quick Navigation & Week Title -->
-                        <div class="flex items-center space-x-2">
-                            <button id="btn-prev-week" title="Previous Week" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                            </button>
-                            
-                            <div>
-                                <h2 id="current-week-heading" class="font-bold text-slate-900 dark:text-slate-100 text-sm md:text-base leading-tight">
-                                    ---
-                                </h2>
-                                <p id="current-week-subtext" class="text-[11px] text-slate-400 hidden sm:block">---</p>
-                            </div>
-
-                            <button id="btn-next-week" title="Next Week" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Header Action Controls -->
-                    <div class="flex items-center space-x-3">
-                        <span id="save-status-text" class="text-xs text-slate-400 transition-colors duration-200">Saved</span>
-
-                        <button id="btn-download" title="Download .txt" class="px-3 py-1.5 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-1.5 text-xs font-medium transition">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                            <span class="hidden sm:inline">Download</span>
-                        </button>
-
-                        <button id="btn-manual-save" title="Save Note" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center gap-1.5 text-xs font-medium transition shadow-sm">
-                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                            <span>Save Note</span>
-                        </button>
-                        
-                        <button onclick="closeWeeklyWorkspace()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium">Close</button>
-                    </div>
-                </header>
-
-                <!-- Main Editor Workspace -->
-                <div class="flex-1 p-4 md:p-8 flex flex-col overflow-hidden">
-                    <textarea 
-                        id="note-editor" 
-                        placeholder="Type your weekly goals, key accomplishments, day breakdowns, or retrospectives here..." 
-                        class="w-full flex-1 bg-transparent resize-none text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm md:text-base leading-relaxed focus:outline-none font-sans"
-                        spellcheck="true"
-                    ></textarea>
-                </div>
-
-                <!-- Editor Footer Metrics -->
-                <footer class="h-10 border-t border-slate-100 dark:border-slate-800/80 px-4 md:px-8 flex items-center justify-between text-xs text-slate-400 shrink-0">
-                    <span id="editor-info-text">Draft automatically saved locally</span>
-                    <div class="flex items-center space-x-4">
-                        <span id="word-count-text">0 words</span>
-                        <span id="char-count-text">0 characters</span>
-                    </div>
-                </footer>
-            </div>
-
-            <!-- VIEW 2: PLANNING VIEW -->
-            <div id="view-planning" class="flex-1 flex flex-col h-full overflow-hidden hidden">
-                <!-- Planning Navbar -->
-                <header class="h-16 border-b border-slate-100 dark:border-slate-800/80 px-4 md:px-8 flex items-center justify-between shrink-0">
-                    <div class="flex items-center space-x-3">
-                        <button id="open-sidebar-btn-plan" class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <i data-lucide="menu" class="w-5 h-5"></i>
-                        </button>
-
-                        <div>
-                            <h2 id="plan-view-heading" class="font-bold text-slate-900 dark:text-slate-100 text-sm md:text-base leading-tight">
-                                Planning Workspace
-                            </h2>
-                            <p class="text-[11px] text-slate-400 hidden sm:block">Long-Term Objectives & Goal Checklists</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center space-x-3">
-                        <span id="plan-save-status" class="text-xs text-slate-400 transition-colors duration-200">Saved</span>
-                        <button id="btn-manual-save-plan" title="Save Plan" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center gap-1.5 text-xs font-medium transition shadow-sm">
-                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                            <span>Save Plan</span>
-                        </button>
-                        <button onclick="closeWeeklyWorkspace()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium">Close</button>
-                    </div>
-                </header>
-
-                <!-- Sub-View 1: Strategic Plans -->
-                <div id="plan-subview-roadmap" class="flex-1 p-4 md:p-8 flex flex-col overflow-hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-2">
-                            <select id="select-plan-period" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none">
-                                <option value="current_quarter">Current Quarter Plan</option>
-                                <option value="next_month">Next Month Plan</option>
-                                <option value="annual">Annual Goals</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button id="btn-insert-template" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Insert Planning Template</button>
-                        </div>
-                    </div>
-
-                    <textarea 
-                        id="plan-editor" 
-                        placeholder="Write your high-level strategy, quarterly objectives, or long-term roadmap here..." 
-                        class="w-full flex-1 bg-transparent resize-none text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm md:text-base leading-relaxed focus:outline-none font-sans"
-                        spellcheck="true"
-                    ></textarea>
-                </div>
-
-                <!-- Sub-View 2: Goals & Checklists -->
-                <div id="plan-subview-checklists" class="flex-1 p-4 md:p-8 flex flex-col overflow-y-auto hidden">
-                    <!-- Progress Card -->
-                    <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Overall Goal Progress</span>
-                            <span id="goal-progress-text" class="text-xs font-bold text-indigo-600 dark:text-indigo-400">0% Completed</span>
-                        </div>
-                        <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                            <div id="goal-progress-bar" class="bg-indigo-600 dark:bg-indigo-400 h-full w-0 transition-all duration-300"></div>
-                        </div>
-                    </div>
-
-                    <!-- Add Goal Input -->
-                    <form id="form-add-goal" class="flex items-center gap-2 mb-6">
-                        <input type="text" id="input-new-goal" placeholder="Add a new goal or checklist item..." class="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition shrink-0">Add Item</button>
-                    </form>
-
-                    <!-- Checklist Items -->
-                    <div id="goals-list-container" class="space-y-2">
-                        <!-- Dynamic Checklist Items -->
-                    </div>
-                </div>
-
-                <!-- Planning Footer -->
-                <footer class="h-10 border-t border-slate-100 dark:border-slate-800/80 px-4 md:px-8 flex items-center justify-between text-xs text-slate-400 shrink-0">
-                    <span id="plan-footer-info">Planning Mode</span>
-                    <span>Organize high-level objectives</span>
-                </footer>
-            </div>
-
-        </main>
-    </div>
-</div>
 
 <!-- PASSWORD CHANGE MODAL -->
 <div id="passwordModal" class="edit-modal">
@@ -1174,7 +875,6 @@ let currentPassword = localStorage.getItem("vpAdminPass") || "1234";
 
 if(localStorage.getItem("vpDarkMode") === "true"){
   document.documentElement.setAttribute("data-theme", "dark");
-  document.documentElement.classList.add("dark");
 }
 
 /* ==========================================================================
@@ -1183,10 +883,14 @@ if(localStorage.getItem("vpDarkMode") === "true"){
 window.addEventListener("DOMContentLoaded", () => {
   const autoOpen = sessionStorage.getItem("autoOpenTool");
   if (autoOpen === "checklist") {
+    // Keep user logged in
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
+    
+    // Open checklist tool
     openTool("checklist");
     
+    // Restore selected product name
     const savedProduct = sessionStorage.getItem("savedProductName");
     if (savedProduct) {
       const pNameSelect = document.getElementById("productName");
@@ -1194,6 +898,7 @@ window.addEventListener("DOMContentLoaded", () => {
       productChanged();
     }
 
+    // Clean up session storage after load
     sessionStorage.removeItem("autoOpenTool");
     sessionStorage.removeItem("savedProductName");
   }
@@ -1216,522 +921,12 @@ function toggleDarkMode(){
   const isDark = document.documentElement.getAttribute("data-theme") === "dark";
   if(isDark){
     document.documentElement.removeAttribute("data-theme");
-    document.documentElement.classList.remove("dark");
     localStorage.setItem("vpDarkMode", "false");
-    localStorage.setItem('weekly_notes_theme', 'light');
   } else {
     document.documentElement.setAttribute("data-theme", "dark");
-    document.documentElement.classList.add("dark");
     localStorage.setItem("vpDarkMode", "true");
-    localStorage.setItem('weekly_notes_theme', 'dark');
   }
 }
-
-/* ==========================================================================
-   📝 WEEKLY WORKSPACE LOGIC
-   ========================================================================== */
-const STORAGE_KEY_WEEKLY_NOTES = 'weekly_notes_app_data';
-const STORAGE_KEY_PLANS = 'weekly_notes_plans_data';
-const STORAGE_KEY_GOALS = 'weekly_notes_goals_data';
-
-let weeklyNotesData = {};
-let plansData = {};
-let goalsData = [];
-
-let selectedWeek = getISOWeekString(new Date());
-let activeMode = 'weekly';
-let activePlanSubview = 'roadmap';
-
-function openWeeklyWorkspace() {
-  document.getElementById("weeklyWorkspaceModal").style.display = "block";
-  loadWeeklyWorkspaceData();
-  renderEditor();
-  renderSavedNotesList();
-  renderPlanView();
-  if(window.lucide) lucide.createIcons();
-}
-
-function closeWeeklyWorkspace() {
-  document.getElementById("weeklyWorkspaceModal").style.display = "none";
-}
-
-function getISOWeekDetails(dateObj) {
-    const d = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return { year: d.getUTCFullYear(), week: weekNo };
-}
-
-function getISOWeekString(dateObj) {
-    const { year, week } = getISOWeekDetails(dateObj);
-    const weekStr = String(week).padStart(2, '0');
-    return `${year}-W${weekStr}`;
-}
-
-function getWeekDateRange(weekStr) {
-    if (!weekStr || !weekStr.includes('-W')) return { start: new Date(), end: new Date() };
-    const parts = weekStr.split('-W');
-    const year = parseInt(parts[0], 10);
-    const week = parseInt(parts[1], 10);
-
-    const simple = new Date(year, 0, 4);
-    const dayOfWeek = simple.getDay() || 7;
-    const monday = new Date(simple);
-    monday.setDate(simple.getDate() - dayOfWeek + 1 + (week - 1) * 7);
-
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-
-    return { start: monday, end: sunday };
-}
-
-function formatWeekDisplayHeading(weekStr) {
-    if (!weekStr || !weekStr.includes('-W')) return weekStr;
-    const parts = weekStr.split('-W');
-    return `Week ${parseInt(parts[1], 10)}, ${parts[0]}`;
-}
-
-function formatWeekDateSubtext(weekStr) {
-    const { start, end } = getWeekDateRange(weekStr);
-    const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
-    const startDay = start.getDate();
-    const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
-    const endDay = end.getDate();
-
-    if (startMonth === endMonth) {
-        return `${startMonth} ${startDay} – ${endDay}, ${end.getFullYear()}`;
-    }
-    return `${startMonth} ${startDay} – ${endMonth} ${endDay}, ${end.getFullYear()}`;
-}
-
-function shiftWeek(weekStr, amount) {
-    const { start } = getWeekDateRange(weekStr);
-    const target = new Date(start);
-    target.setDate(start.getDate() + (amount * 7));
-    return getISOWeekString(target);
-}
-
-function loadWeeklyWorkspaceData() {
-    try {
-        weeklyNotesData = JSON.parse(localStorage.getItem(STORAGE_KEY_WEEKLY_NOTES)) || {};
-        plansData = JSON.parse(localStorage.getItem(STORAGE_KEY_PLANS)) || {
-            current_quarter: "## Quarterly Objectives\n- [ ] Deliver core features\n- [ ] Improve productivity systems\n\n## Strategy & Ideas\n- ",
-            next_month: "",
-            annual: ""
-        };
-        goalsData = JSON.parse(localStorage.getItem(STORAGE_KEY_GOALS)) || [
-            { id: 1, text: "Set up roadmap objectives", done: false },
-            { id: 2, text: "Complete weekly review & task planning", done: true }
-        ];
-    } catch (e) {
-        console.error('Failed to load storage data', e);
-    }
-}
-
-function saveNotes(isExplicit = false) {
-    localStorage.setItem(STORAGE_KEY_WEEKLY_NOTES, JSON.stringify(weeklyNotesData));
-    showSaveIndicator('save-status-text', isExplicit);
-    renderSavedNotesList();
-}
-
-function savePlans(isExplicit = false) {
-    localStorage.setItem(STORAGE_KEY_PLANS, JSON.stringify(plansData));
-    showSaveIndicator('plan-save-status', isExplicit);
-    updateBadges();
-}
-
-function saveGoals() {
-    localStorage.setItem(STORAGE_KEY_GOALS, JSON.stringify(goalsData));
-    renderGoalsList();
-    updateBadges();
-}
-
-function showSaveIndicator(elementId, isExplicit = false) {
-    const statusEl = document.getElementById(elementId);
-    if (!statusEl) return;
-    
-    if (isExplicit) {
-        statusEl.textContent = 'Saved!';
-        statusEl.className = 'text-xs text-emerald-600 dark:text-emerald-400 font-semibold transition-colors duration-200';
-    } else {
-        statusEl.textContent = 'Saving...';
-        statusEl.className = 'text-xs text-indigo-600 dark:text-indigo-400 font-medium transition-colors duration-200';
-    }
-
-    setTimeout(() => {
-        statusEl.textContent = 'Saved';
-        statusEl.className = 'text-xs text-slate-400 transition-colors duration-200';
-    }, 1200);
-}
-
-function updateBadges() {
-    const roadmapCount = Object.keys(plansData).filter(k => plansData[k] && plansData[k].trim()).length;
-    document.getElementById('badge-roadmap-count').textContent = roadmapCount;
-    document.getElementById('badge-checklists-count').textContent = goalsData.length;
-}
-
-function setWorkspaceMode(mode) {
-    activeMode = mode;
-    const weeklyView = document.getElementById('view-weekly-notes');
-    const planView = document.getElementById('view-planning');
-    const weeklySidebar = document.getElementById('sidebar-weekly-content');
-    const planSidebar = document.getElementById('sidebar-planning-content');
-
-    const btnWeekly = document.getElementById('mode-btn-weekly');
-    const btnPlan = document.getElementById('mode-btn-planning');
-
-    if (mode === 'weekly') {
-        weeklyView.classList.remove('hidden');
-        planView.classList.add('hidden');
-        weeklySidebar.classList.remove('hidden');
-        planSidebar.classList.add('hidden');
-
-        btnWeekly.className = "py-1.5 text-xs font-semibold rounded-md transition text-slate-900 dark:text-white bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center gap-1.5";
-        btnPlan.className = "py-1.5 text-xs font-semibold rounded-md transition text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5";
-        renderEditor();
-    } else {
-        weeklyView.classList.add('hidden');
-        planView.classList.remove('hidden');
-        weeklySidebar.classList.add('hidden');
-        planSidebar.classList.remove('hidden');
-
-        btnPlan.className = "py-1.5 text-xs font-semibold rounded-md transition text-slate-900 dark:text-white bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center gap-1.5";
-        btnWeekly.className = "py-1.5 text-xs font-semibold rounded-md transition text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5";
-        renderPlanView();
-    }
-}
-
-function renderEditor() {
-    const editor = document.getElementById('note-editor');
-    const weekPicker = document.getElementById('week-picker');
-    const heading = document.getElementById('current-week-heading');
-    const subtext = document.getElementById('current-week-subtext');
-
-    weekPicker.value = selectedWeek;
-    heading.textContent = formatWeekDisplayHeading(selectedWeek);
-    subtext.textContent = formatWeekDateSubtext(selectedWeek);
-
-    const content = weeklyNotesData[selectedWeek] || '';
-    editor.value = content;
-    updateCounts(content);
-}
-
-function updateCounts(text) {
-    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const chars = text.length;
-
-    document.getElementById('word-count-text').textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
-    document.getElementById('char-count-text').textContent = `${chars} ${chars === 1 ? 'character' : 'characters'}`;
-}
-
-function renderSavedNotesList(filterQuery = '') {
-    const container = document.getElementById('notes-history-list');
-    const badge = document.getElementById('saved-count-badge');
-    container.innerHTML = '';
-
-    const keys = Object.keys(weeklyNotesData)
-        .filter(weekKey => weeklyNotesData[weekKey] && weeklyNotesData[weekKey].trim().length > 0)
-        .sort((a, b) => b.localeCompare(a));
-
-    badge.textContent = keys.length;
-
-    const filteredKeys = keys.filter(weekKey => {
-        if (!filterQuery) return true;
-        const content = weeklyNotesData[weekKey].toLowerCase();
-        const displayTitle = formatWeekDisplayHeading(weekKey).toLowerCase();
-        const dateSubtext = formatWeekDateSubtext(weekKey).toLowerCase();
-        const q = filterQuery.toLowerCase();
-        return content.includes(q) || displayTitle.includes(q) || dateSubtext.includes(q) || weekKey.includes(q);
-    });
-
-    if (filteredKeys.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 italic py-4 text-center">${filterQuery ? 'No matching saved weeks' : 'No saved weeks yet'}</p>`;
-        return;
-    }
-
-    filteredKeys.forEach(weekKey => {
-        const isSelected = weekKey === selectedWeek;
-        const snippet = weeklyNotesData[weekKey].trim().substring(0, 45) + (weeklyNotesData[weekKey].length > 45 ? '...' : '');
-
-        const btn = document.createElement('button');
-        btn.className = `w-full text-left p-2.5 rounded-lg transition flex flex-col space-y-1 ${
-            isSelected 
-                ? 'bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60' 
-                : 'hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent'
-        }`;
-
-        btn.onclick = () => {
-            selectedWeek = weekKey;
-            renderEditor();
-            renderSavedNotesList(filterQuery);
-            document.getElementById('sidebar').classList.add('-translate-x-full');
-        };
-
-        btn.innerHTML = `
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold ${isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'}">${formatWeekDisplayHeading(weekKey)}</span>
-                <span class="text-[10px] text-slate-400">${weekKey}</span>
-            </div>
-            <p class="text-[10px] text-slate-400 font-medium">${formatWeekDateSubtext(weekKey)}</p>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate leading-snug">${escapeHtml(snippet)}</p>
-        `;
-
-        container.appendChild(btn);
-    });
-}
-
-function renderPlanView() {
-    const planEditor = document.getElementById('plan-editor');
-    const selectPeriod = document.getElementById('select-plan-period');
-    
-    const currentPeriod = selectPeriod.value;
-    planEditor.value = plansData[currentPeriod] || '';
-
-    renderGoalsList();
-    updateBadges();
-}
-
-function setPlanSubview(subview) {
-    activePlanSubview = subview;
-    const subRoadmap = document.getElementById('plan-subview-roadmap');
-    const subChecklists = document.getElementById('plan-subview-checklists');
-    const btnRoadmap = document.getElementById('plan-tab-roadmap');
-    const btnChecklists = document.getElementById('plan-tab-checklists');
-
-    if (subview === 'roadmap') {
-        subRoadmap.classList.remove('hidden');
-        subChecklists.classList.add('hidden');
-        btnRoadmap.className = "w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400";
-        btnChecklists.className = "w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
-    } else {
-        subRoadmap.classList.add('hidden');
-        subChecklists.classList.remove('hidden');
-        btnChecklists.className = "w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400";
-        btnRoadmap.className = "w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
-    }
-}
-
-function renderGoalsList() {
-    const container = document.getElementById('goals-list-container');
-    container.innerHTML = '';
-
-    if (goalsData.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 italic py-4 text-center">No goals added yet. Add your first item above!</p>`;
-        document.getElementById('goal-progress-bar').style.width = '0%';
-        document.getElementById('goal-progress-text').textContent = '0% Completed';
-        return;
-    }
-
-    const completed = goalsData.filter(g => g.done).length;
-    const percentage = Math.round((completed / goalsData.length) * 100);
-
-    document.getElementById('goal-progress-bar').style.width = `${percentage}%`;
-    document.getElementById('goal-progress-text').textContent = `${percentage}% Completed (${completed}/${goalsData.length})`;
-
-    goalsData.forEach(goal => {
-        const div = document.createElement('div');
-        div.className = `p-3 rounded-lg border flex items-center justify-between transition ${
-            goal.done 
-                ? 'bg-slate-50/50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/60 opacity-75' 
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
-        }`;
-
-        div.innerHTML = `
-            <label class="flex items-center space-x-3 cursor-pointer flex-1">
-                <input type="checkbox" ${goal.done ? 'checked' : ''} onchange="toggleGoal(${goal.id})" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700">
-                <span class="text-sm ${goal.done ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'}">${escapeHtml(goal.text)}</span>
-            </label>
-            <button onclick="deleteGoal(${goal.id})" class="p-1 text-slate-400 hover:text-rose-500 rounded transition">
-                <i data-lucide="trash" class="w-4 h-4"></i>
-            </button>
-        `;
-
-        container.appendChild(div);
-    });
-
-    if(window.lucide) lucide.createIcons();
-}
-
-function toggleGoal(id) {
-    goalsData = goalsData.map(g => g.id === id ? { ...g, done: !g.done } : g);
-    saveGoals();
-}
-
-function deleteGoal(id) {
-    goalsData = goalsData.filter(g => g.id !== id);
-    saveGoals();
-}
-
-// Attach event listeners after page load
-document.addEventListener('DOMContentLoaded', () => {
-    loadWeeklyWorkspaceData();
-
-    const editor = document.getElementById('note-editor');
-    const planEditor = document.getElementById('plan-editor');
-    const weekPicker = document.getElementById('week-picker');
-    const searchInput = document.getElementById('search-input');
-    const selectPeriod = document.getElementById('select-plan-period');
-
-    document.getElementById('mode-btn-weekly').addEventListener('click', () => setWorkspaceMode('weekly'));
-    document.getElementById('mode-btn-planning').addEventListener('click', () => setWorkspaceMode('planning'));
-
-    document.getElementById('plan-tab-roadmap').addEventListener('click', () => setPlanSubview('roadmap'));
-    document.getElementById('plan-tab-checklists').addEventListener('click', () => setPlanSubview('checklists'));
-
-    editor.addEventListener('input', (e) => {
-        const val = e.target.value;
-        if (val.trim()) {
-            weeklyNotesData[selectedWeek] = val;
-        } else {
-            delete weeklyNotesData[selectedWeek];
-        }
-        updateCounts(val);
-        saveNotes(false);
-    });
-
-    planEditor.addEventListener('input', (e) => {
-        const currentPeriod = selectPeriod.value;
-        plansData[currentPeriod] = e.target.value;
-        savePlans(false);
-    });
-
-    document.getElementById('btn-manual-save').addEventListener('click', () => {
-        const val = editor.value;
-        if (val.trim()) {
-            weeklyNotesData[selectedWeek] = val;
-        } else {
-            delete weeklyNotesData[selectedWeek];
-        }
-        saveNotes(true);
-    });
-
-    document.getElementById('btn-manual-save-plan').addEventListener('click', () => {
-        const currentPeriod = selectPeriod.value;
-        plansData[currentPeriod] = planEditor.value;
-        savePlans(true);
-    });
-
-    selectPeriod.addEventListener('change', () => {
-        renderPlanView();
-    });
-
-    weekPicker.addEventListener('change', (e) => {
-        if (e.target.value) {
-            selectedWeek = e.target.value;
-            renderEditor();
-            renderSavedNotesList(searchInput.value);
-        }
-    });
-
-    document.getElementById('btn-jump-this-week').addEventListener('click', () => {
-        selectedWeek = getISOWeekString(new Date());
-        renderEditor();
-        renderSavedNotesList(searchInput.value);
-    });
-
-    document.getElementById('btn-prev-week').addEventListener('click', () => {
-        selectedWeek = shiftWeek(selectedWeek, -1);
-        renderEditor();
-        renderSavedNotesList(searchInput.value);
-    });
-
-    document.getElementById('btn-next-week').addEventListener('click', () => {
-        selectedWeek = shiftWeek(selectedWeek, 1);
-        renderEditor();
-        renderSavedNotesList(searchInput.value);
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        renderSavedNotesList(e.target.value);
-    });
-
-    document.getElementById('form-add-goal').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.getElementById('input-new-goal');
-        const text = input.value.trim();
-        if (text) {
-            goalsData.push({ id: Date.now(), text, done: false });
-            input.value = '';
-            saveGoals();
-        }
-    });
-
-    document.getElementById('btn-insert-template').addEventListener('click', () => {
-        const template = `## Focus & Objectives\n- \n\n## Actionable Deliverables\n- [ ] Task 1\n- [ ] Task 2\n\n## Review & Reflections\n- `;
-        const currentVal = planEditor.value;
-        planEditor.value = currentVal ? `${currentVal}\n\n${template}` : template;
-        plansData[selectPeriod.value] = planEditor.value;
-        savePlans(true);
-    });
-
-    document.getElementById('btn-insert-active-plan').addEventListener('click', () => {
-        const activeGoals = goalsData.filter(g => !g.done).map(g => `- [ ] ${g.text}`).join('\n');
-        if (!activeGoals) return;
-
-        const heading = `\n\n### Linked Goals:\n${activeGoals}`;
-        editor.value = (editor.value || '') + heading;
-        weeklyNotesData[selectedWeek] = editor.value;
-        saveNotes(true);
-        setWorkspaceMode('weekly');
-    });
-
-    document.getElementById('btn-download').addEventListener('click', () => {
-        if (!editor.value) return;
-        const blob = new Blob([editor.value], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Weekly-Note-${selectedWeek}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    document.getElementById('btn-export-backup').addEventListener('click', () => {
-        const backupData = {
-            weeklyNotes: weeklyNotesData,
-            plans: plansData,
-            goals: goalsData,
-            exportedAt: new Date().toISOString()
-        };
-        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `weekly-workspace-backup-${selectedWeek}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    document.getElementById('import-backup-file').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const imported = JSON.parse(event.target.result);
-                if (imported.weeklyNotes) weeklyNotesData = imported.weeklyNotes;
-                if (imported.plans) plansData = imported.plans;
-                if (imported.goals) goalsData = imported.goals;
-
-                saveNotes(true);
-                savePlans(true);
-                saveGoals();
-                renderEditor();
-                renderPlanView();
-            } catch (err) {
-                console.error('Failed to parse backup JSON file.', err);
-            }
-        };
-        reader.readAsText(file);
-    });
-
-    const sidebar = document.getElementById('sidebar');
-    if(document.getElementById('open-sidebar-btn')) document.getElementById('open-sidebar-btn').addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
-    if(document.getElementById('open-sidebar-btn-plan')) document.getElementById('open-sidebar-btn-plan').addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
-});
 
 function openPasswordModal(){
   document.getElementById("currentPassword").value = "";
@@ -2237,10 +1432,13 @@ function nextProduct(){
     history.push(record);
     localStorage.setItem("drcTestingHistory", JSON.stringify(history));
 
+    // Save active page state into SessionStorage before page reload
     sessionStorage.setItem("autoOpenTool", "checklist");
     sessionStorage.setItem("savedProductName", product);
 
     alert("Testing saved successfully! Refreshing page to prepare for the next product.");
+
+    // Refresh page
     location.reload();
 }
 
@@ -2253,6 +1451,7 @@ function renderHistory(){
         const productName = String(item.productName || "").toLowerCase();
         const productId = String(item.productId || "").toLowerCase();
 
+        // Filter based on search input (matches Product Name or Product ID)
         if(searchTerm && !productName.includes(searchTerm) && !productId.includes(searchTerm)){
             return;
         }
